@@ -1,0 +1,28 @@
+{
+  "name": "detector-de-encontros",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Detector de encontros em TypeScript e Node.js com Haversine, API e mapas geográfico e técnico.",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "start": "node dist/src/server.js",
+    "launch": "node scripts/launch.mjs",
+    "pretest": "npm run build",
+    "test": "node --test tests/*.test.js",
+    "typecheck": "tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.web.json --noEmit",
+    "benchmark": "npm run build && node benchmarks/run.mjs",
+    "process": "node dist/src/cli.js --input datasets --output outputs",
+    "validate": "node dist/src/compare.js",
+    "web": "npm start"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "5.9.3"
+  }
+}

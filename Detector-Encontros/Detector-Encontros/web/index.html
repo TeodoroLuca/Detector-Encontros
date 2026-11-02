@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#121316">
+  <meta name="description" content="Detector de Encontros: processamento de datasets, validação e diagnóstico de geolocalização.">
+  <title>Detector de Encontros · Análise geoespacial</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/premium.css">
+  <link rel="stylesheet" href="/refinement.css">
+  <script type="module" src="/map.js"></script>
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m0 0-5 5m5-5 5 5"/><path d="M4 16v4h16v-4"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M7 2h7l5 5v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/><path d="M14 2v6h5M8 13h8M8 17h6"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 16 4-5 4 3 5-8"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m0 0-5-5m5 5 5-5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m0 0-7-7m7 7-7 7"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.8"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m18 8v5h-5M3 3l7 7m11 11-7-7M16 3h5v5M8 21H3v-5m18-13-7 7M3 21l7-7"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><path d="M12 1v4m0 14v4M1 12h4m14 0h4"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></symbol>
+  </svg><div class="app-shell" id="app-shell"><div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
+  <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
+    <div class="sidebar-header"><div class="brand"><div class="brand-mark"><img src="/favicon.svg" alt="" width="43" height="43"></div><div class="brand-text"><strong>Detector de<br>Encontros</strong><span>Análise de geolocalização</span></div></div><button class="sidebar-toggle icon-button" id="sidebar-toggle" type="button" aria-label="Recolher menu" aria-expanded="true" title="Expandir ou recolher menu"><svg class="icon"><use href="#i-panel"/></svg></button></div>
+    <div class="nav-heading">NAVEGAÇÃO</div>
+    <nav class="side-nav" aria-label="Seções da plataforma">
+      <a class="nav-link active" href="#processamento" title="Importar dataset"><svg class="icon"><use href="#i-upload"/></svg><span>Importar dataset</span></a>
+      <a class="nav-link" href="#visao-geral" title="Visão geral"><svg class="icon"><use href="#i-grid"/></svg><span>Visão geral</span></a>
+      <a class="nav-link" href="#mapa" title="Mapa de encontros"><svg class="icon"><use href="#i-map"/></svg><span>Mapa de encontros</span></a>
+      <a class="nav-link" href="#desempenho" title="Desempenho"><svg class="icon"><use href="#i-chart"/></svg><span>Desempenho</span></a>
+      <a class="nav-link" href="#resultados" title="Resultados"><svg class="icon"><use href="#i-file"/></svg><span>Resultados</span></a>
+      <a class="nav-link" href="#validacao" title="Validar gabarito"><svg class="icon"><use href="#i-shield"/></svg><span>Validar gabarito</span></a>
+    </nav>
+    <div class="sidebar-spacer"></div>
+    <div class="rule-panel"><div class="rule-title"><svg class="icon"><use href="#i-shield"/></svg>REGRAS DO MOTOR</div><div class="rule-number">&lt; 20 <small>metros</small></div><p>Mesmo timestamp, Haversine, par único por instante.</p><div class="rule-footer">Raio terrestre: 6.371.000 m</div></div>
+    <div class="system-status"><span class="status-pulse"></span><span id="server-status">Conectando...</span></div>
+  </aside>
+  <main class="main-content">
+    <header class="topbar"><div class="topbar-left"><button class="icon-button mobile-menu-trigger" type="button" id="mobile-menu" aria-label="Abrir menu" aria-controls="sidebar" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button><div class="breadcrumb"><img class="topbar-favicon" src="/favicon.svg" width="22" height="22" alt=""><span>Detector de Encontros</span><svg class="icon"><use href="#i-chevron"/></svg><strong id="current-section">Importar dataset</strong></div></div><div class="top-right"><span class="build-pill"><span class="mini-pulse"></span><span id="top-server-status">Conectando...</span></span><span class="version-label">v1.0.0</span></div></header>
+    <div class="content">
+      <div class="heading-row"><div><div class="eyebrow">PAINEL DE OPERAÇÃO</div><h1>Detector de Encontros</h1><p>Importe os registros, execute a detecção e confira as ocorrências.</p></div><button class="button button-primary heading-action" type="button" data-open-file><svg class="icon"><use href="#i-upload"/></svg> Importar dataset</button></div>
+      <div class="pipeline" aria-label="Fluxo de trabalho"><div class="pipeline-item"><span class="pipeline-index">01</span><div><strong>Importar</strong><small>Validar os registros</small></div></div><span class="pipeline-chevron">›</span><div class="pipeline-item"><span class="pipeline-index">02</span><div><strong>Processar</strong><small>Calcular encontros</small></div></div><span class="pipeline-chevron">›</span><div class="pipeline-item"><span class="pipeline-index">03</span><div><strong>Verificar e exportar</strong><small>JSON oficial do desafio</small></div></div></div>
+      <section class="upper-grid" id="processamento">
+        <div class="surface import-surface">
+          <div class="surface-heading"><div><div class="eyebrow">ENTRADA DE DADOS</div><h2>Importar dataset</h2><p>Selecione os arquivos para validar e processar.</p></div><div class="heading-icon"><svg class="icon"><use href="#i-upload"/></svg></div></div>
+          <input id="file-input" type="file" accept=".txt,text/plain" multiple hidden>
+          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Selecionar ou arrastar arquivos TXT"><div class="dropzone-icon"><svg class="icon"><use href="#i-upload"/></svg></div><strong>Arraste seus arquivos .txt aqui</strong><span>ou <span class="drop-link">clique para selecionar</span></span><small id="upload-limit">CSV separado por ponto e vírgula · Consultando limite do servidor…</small></div>
+          <div class="file-list" id="file-list" aria-live="polite"></div>
+          <div class="preflight-overview" id="preflight-overview" hidden><div class="preflight-title"><svg class="icon"><use href="#i-check"/></svg> Pré-validação dos arquivos</div><div class="preflight-numbers"><div><strong id="preflight-records">—</strong><span>registros</span></div><div><strong id="preflight-times">—</strong><span>timestamps*</span></div><div><strong id="preflight-people">—</strong><span>IDs únicos*</span></div></div><small>*Totais somados por arquivo; IDs e timestamps podem se repetir entre datasets.</small></div>
+          <details class="settings-details"><summary>Opções avançadas <svg class="icon"><use href="#i-chevron"/></svg></summary><div class="settings-fields"><label for="generic-policy">Encontros genéricos</label><select id="generic-policy" class="field"><option value="all">Quaisquer duas pessoas (padrão)</option><option value="tornozeleiras">Somente duas tornozeleiras</option></select><p>Confirme essa interpretação com o gabarito oficial antes da entrega.</p><label for="processing-mode">Ordenação dos registros</label><select id="processing-mode" class="field"><option value="unordered">Qualquer ordem de timestamp (seguro)</option><option value="sorted">Exigir ordem cronológica</option></select></div></details>
+          <div class="import-bottom"><p><svg class="icon"><use href="#i-info"/></svg> O JSON exportado segue o formato do desafio.</p><button type="button" class="button button-primary" id="process-btn" disabled>Processar arquivos <svg class="icon"><use href="#i-arrow"/></svg></button></div>
+          <div class="progress-region" id="progress-region" role="status" aria-live="polite" hidden><div><span class="spinner"></span><span id="progress-label">Processando...</span></div><div class="progress-track"><div id="progress-fill"></div></div></div>
+        </div>
+        <div class="surface insights-surface"><div class="surface-heading"><div><div class="eyebrow">RESUMO DA ANÁLISE</div><h2>Distribuição e processamento</h2><p>Resumo dos resultados dos datasets analisados.</p></div><div class="heading-icon"><svg class="icon"><use href="#i-chart"/></svg></div></div>
+          <div class="donut-section"><div class="donut" id="donut"><div class="donut-inner"><strong id="donut-total">0</strong><span>encontros</span></div></div><div class="donut-labels"><div><span><i class="dot generic"></i> Genéricos</span><strong id="legend-generic">0%</strong></div><div><span><i class="dot faction"></i> Facção</span><strong id="legend-faction">0%</strong></div><div><span><i class="dot protect"></i> Protetiva</span><strong id="legend-protect">0%</strong></div></div></div>
+          <div class="insight-divider"></div><div class="info-metrics"><div><span>Datasets analisados</span><strong id="datasets-count">0</strong></div><div><span>Tempo de execução acumulado</span><strong id="time-total">0 ms</strong></div></div><div class="insight-foot"><svg class="icon"><use href="#i-info"/></svg> Totais dos arquivos processados nesta sessão.</div>
+        </div>
+      </section>
+      <section class="stats-grid" id="visao-geral" aria-label="Indicadores gerais">
+        <div class="stat-card"><div class="stat-label">Total de encontros <span class="stat-icon"><svg class="icon"><use href="#i-target"/></svg></span></div><div class="stat-number" id="stat-total">0</div><div class="stat-note">Ocorrências identificadas</div></div>
+        <div class="stat-card"><div class="stat-label">Genéricos <span class="stat-icon cyan"><svg class="icon"><use href="#i-pin"/></svg></span></div><div class="stat-number" id="stat-generic">0</div><div class="stat-note"><span class="dot generic"></span> Proximidade entre IDs</div></div>
+        <div class="stat-card"><div class="stat-label">De facção <span class="stat-icon amber"><svg class="icon"><use href="#i-database"/></svg></span></div><div class="stat-number" id="stat-faction">0</div><div class="stat-note"><span class="dot faction"></span> Mesma facção</div></div>
+        <div class="stat-card"><div class="stat-label">Medida protetiva <span class="stat-icon rose"><svg class="icon"><use href="#i-shield"/></svg></span></div><div class="stat-number" id="stat-protect">0</div><div class="stat-note"><span class="dot protect"></span> Vínculo de restrição</div></div>
+      </section>
+      <section class="surface map-surface" id="mapa" aria-labelledby="map-heading">
+        <div class="surface-heading map-heading"><div><div class="eyebrow">VISUALIZAÇÃO GEOGRÁFICA</div><h2 id="map-heading">Mapa de encontros <span class="map-live-dot"></span></h2><p>Explore os encontros registrados e abra os detalhes diretamente no mapa.</p></div><div class="map-header-actions"><div class="map-mode-picker" role="group" aria-label="Visualização do mapa"><button type="button" id="map-geographic" class="map-mode-button active" aria-pressed="true" title="Mapa de ruas, estados e cidades (internet)">Geográfico</button><button type="button" id="map-technical" class="map-mode-button" aria-pressed="false" title="Mapa vetorial simplificado offline">Técnico</button></div><span class="map-counter" id="map-counter">Nenhum resultado</span><button class="button button-outline map-fit-button" type="button" id="map-fit"><svg class="icon"><use href="#i-crosshair"/></svg> Enquadrar</button></div></div>
+        <div class="map-content">
+          <div class="map-area" id="map-area" tabindex="0" aria-label="Mapa interativo com coordenadas geográficas, zoom e deslocamento pelo mouse ou teclado">
+            <canvas id="encounter-map" aria-label="Mapa interativo com coordenadas exatas dos encontros detectados"></canvas>
+            <div class="map-location-label" id="map-location-label"><span class="map-indicator"></span><span id="map-layer-status">MAPA GEOGRÁFICO · ONLINE</span></div>
+            <div class="map-controls" role="group" aria-label="Controles do mapa"><button type="button" id="map-zoom-in" class="map-control" aria-label="Aproximar mapa" title="Aproximar"><svg class="icon"><use href="#i-plus"/></svg></button><button type="button" id="map-zoom-out" class="map-control" aria-label="Afastar mapa" title="Afastar"><svg class="icon"><use href="#i-minus"/></svg></button><button type="button" id="map-reset" class="map-control" aria-label="Enquadrar encontros" title="Enquadrar"><svg class="icon"><use href="#i-expand"/></svg></button></div>
+            <div class="map-empty" id="map-empty"><div class="map-empty-icon"><svg class="icon"><use href="#i-map"/></svg></div><strong>Seu mapa está pronto para análise</strong><span>Importe e processe um dataset para visualizar os encontros identificados.</span><button type="button" class="button button-primary" data-open-file>Importar dataset <svg class="icon"><use href="#i-arrow"/></svg></button></div>
+            <div class="map-tooltip" id="map-tooltip" hidden></div>
+            <div class="map-scale" id="map-scale">Escala aproximada</div><div id="map-attribution" class="map-attribution">Mapas © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a></div>
+          </div>
+          <aside class="map-aside" aria-label="Explorador de ocorrências">
+            <div class="map-aside-head"><div><span class="map-aside-kicker">NAVEGADOR</span><h3>Ocorrências</h3></div><span class="map-aside-count" id="map-aside-count">0</span></div>
+            <label class="map-filter-label" for="map-type-filter">Filtrar por categoria<select id="map-type-filter" class="field"><option value="">Todas as categorias</option><option value="generico">Genéricos</option><option value="faccao">De facção</option><option value="protetiva">Medida protetiva</option></select></label>
+            <div class="map-encounter-list" id="map-encounter-list" aria-live="polite"><div class="map-list-empty">Os encontros serão listados após o processamento.</div></div>
+          </aside>
+        </div>
+        <div class="map-bottom"><div class="map-legend"><span><i class="dot generic"></i> Genérico</span><span><i class="dot faction"></i> Facção</span><span><i class="dot protect"></i> Protetiva</span></div><span id="map-hint">Selecione um marcador para ver os detalhes</span></div>
+      </section>
+      <section class="surface performance-surface" id="desempenho"><div class="performance-heading"><div><div class="eyebrow">MÉTRICAS DE EXECUÇÃO</div><h2>Desempenho do algoritmo</h2></div><span class="performance-context" id="performance-context">Selecione um dataset processado</span></div><div class="performance-grid"><div><span>Registros analisados</span><strong id="perf-records">—</strong><small>Linhas de posicionamento</small></div><div><span>Pares possíveis</span><strong id="perf-potential">—</strong><small>No mesmo timestamp</small></div><div><span>Pares candidatos</span><strong id="perf-candidates">—</strong><small id="perf-candidate-method">Conforme a estratégia do motor</small></div><div><span>Cálculos Haversine</span><strong id="perf-haversine">—</strong><small>Distância exata calculada</small></div><div><span>Tempo de execução</span><strong id="perf-time">—</strong><small>Medido pelo Node.js</small></div></div><div class="efficiency-row"><div><span>Redução de pares avaliados</span><strong id="perf-reduction">—</strong></div><div class="efficiency-track"><div id="perf-bar"></div></div><small id="perf-explanation">A seleção espacial reduz comparações de distância. Todos os registros são analisados e os encontros confirmados permanecem no JSON.</small></div></section>
+      <section class="surface results-surface" id="resultados"><div class="surface-heading results-heading"><div><div class="eyebrow">SAÍDA DO ALGORITMO</div><h2>Encontros detectados</h2><p>Filtre, inspecione coordenadas e exporte o resultado.</p></div><div class="export-actions"><a class="button button-outline disabled-link" id="download-btn" href="#resultados" aria-disabled="true"><svg class="icon"><use href="#i-download"/></svg> JSON</a><a class="button button-outline disabled-link" id="download-all" href="#resultados" aria-disabled="true"><svg class="icon"><use href="#i-download"/></svg> Exportar ZIP</a></div></div>
+        <div class="dataset-activity" id="dataset-activity" aria-live="polite"><div class="no-datasets">Nenhum dataset processado.</div></div>
+        <div class="result-controls"><label>Dataset<select class="field" id="dataset-select" disabled><option>Nenhum arquivo</option></select></label><label>Categoria<select class="field" id="type-filter" disabled><option value="">Todas</option><option value="generico">Genérico</option><option value="faccao">Facção</option><option value="protetiva">Protetiva</option></select></label><label class="search-label">Pesquisar por ID ou horário<div class="searchbox"><svg class="icon"><use href="#i-search"/></svg><input type="search" id="search-input" placeholder="Ex.: 40 ou 00:05:15" disabled></div></label></div>
+        <div class="table-scroll"><table><thead><tr><th>CLASSIFICAÇÃO</th><th>ENVOLVIDOS</th><th>TIMESTAMP</th><th>DISTÂNCIA</th><th class="detail-col">DETALHES</th></tr></thead><tbody id="results-body"><tr><td colspan="5" class="table-empty">Importe um dataset para visualizar os encontros.</td></tr></tbody></table></div><div class="pagination"><span id="page-info">Nenhum resultado</span><div class="pagination-buttons"><button class="icon-button" id="prev-page" disabled aria-label="Página anterior"><svg class="icon flip"><use href="#i-chevron"/></svg></button><span id="page-label">—</span><button class="icon-button" id="next-page" disabled aria-label="Próxima página"><svg class="icon"><use href="#i-chevron"/></svg></button></div></div>
+      </section>
+      <section class="surface compare-surface" id="validacao"><div class="surface-heading"><div><div class="eyebrow">VALIDAÇÃO</div><h2>Comparar com o gabarito</h2><p>Confirme os encontros detectados usando o JSON oficial dos datasets de teste.</p></div><div class="heading-icon"><svg class="icon"><use href="#i-shield"/></svg></div></div><div class="compare-layout"><div class="compare-upload"><p>Selecione um dataset na tabela acima e carregue seu arquivo de resposta correspondente.</p><label for="reference-file" class="compare-file"><svg class="icon"><use href="#i-file"/></svg><span id="reference-name">Selecionar gabarito .json</span><input type="file" id="reference-file" accept=".json,application/json" hidden></label><button type="button" class="button button-primary" id="compare-btn" disabled>Comparar resultados <svg class="icon"><use href="#i-arrow"/></svg></button><small>Comparação por par, timestamp, tipo, coordenadas e distância (tolerância de 10⁻⁶ m).</small></div><div id="compare-result" class="compare-result" aria-live="polite"><div class="compare-empty"><svg class="icon"><use href="#i-check"/></svg><strong>Aguardando validação</strong><span>O diagnóstico de divergências aparecerá aqui.</span></div></div></div></section>
+      <footer class="footer"><span>Detector de Encontros · Ferramenta técnica</span><span>Haversine · Timestamp exato · Distância &lt; 20 m</span></footer>
+    </div>
+  </main>
+</div>
+<div class="drawer-backdrop" id="drawer-backdrop" hidden></div><aside class="detail-drawer" id="detail-drawer" role="dialog" aria-modal="true" aria-label="Detalhes do encontro" aria-hidden="true"><div class="drawer-head"><div><div class="eyebrow">ENCONTRO SELECIONADO</div><h2>Detalhes do encontro</h2></div><button class="icon-button" id="drawer-close" aria-label="Fechar detalhes"><svg class="icon"><use href="#i-close"/></svg></button></div><div class="drawer-body"><div id="drawer-type"></div><h3 id="drawer-ids">—</h3><div class="drawer-info"><div><span>Timestamp</span><strong id="drawer-time">—</strong></div><div><span>Distância (Haversine)</span><strong id="drawer-distance">—</strong></div></div><div class="geo-heading">Posições relativas <span>Raio de 20 m</span></div><div class="geo-plot"><svg id="geo-svg" viewBox="0 0 320 220" role="img" aria-label="Projeção local aproximada da distância entre as posições"><circle cx="160" cy="110" r="68" fill="#e5494912" stroke="#e74949" stroke-width="1.5" stroke-dasharray="5 5"/><line x1="160" y1="110" x2="160" y2="110" id="geo-connecting" stroke="#e74949" stroke-width="2"/><circle id="geo-point-1" cx="160" cy="110" r="7" fill="#ff5d63" stroke="#171719" stroke-width="3"/><circle id="geo-point-2" cx="160" cy="110" r="7" fill="#d3d4d8" stroke="#171719" stroke-width="3"/><text x="173" y="104" fill="#cbd6eb" font-size="11" id="geo-label-1">A</text><text x="173" y="104" fill="#e7b1b1" font-size="11" id="geo-label-2">B</text></svg></div><p class="geo-warning">Representação aproximada em plano local. A distância oficial do resultado é calculada exclusivamente por Haversine.</p><div class="geo-heading">Coordenadas originais</div><div id="drawer-positions" class="drawer-positions"></div></div></aside>
+<div class="toast" id="toast" role="alert" hidden></div>
+</body>
+</html>
